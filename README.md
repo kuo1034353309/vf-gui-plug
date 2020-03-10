@@ -1,3 +1,5 @@
+## 调试
+
 1. 安装 vs code 插件 Live Server && npm i
 
 2. packages 目录中建立相关 ts 文件 , 参考 testButton 示例

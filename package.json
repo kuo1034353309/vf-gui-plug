@@ -1,0 +1,30 @@
+{
+  "name": "vf-gui-plug",
+  "version": "0.0.1",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "build": "tsc -m umd && node node_modules/uglify-js/bin/uglifyjs --help",
+    "watch": "tsc -watch -m umd"
+  },
+  "keywords": [
+  ],
+  "files": [
+    "package.json",
+    "README.md"
+  ],
+  "author": "杨啸 <yangxiao86@vipkid.com.cn>",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "uglify-js": "^3.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vipkid-edu/vf-gui-plug.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vipkid-edu/vf-gui-plug/issues"
+  },
+  "homepage": "https://github.com/vipkid-edu/vf-gui-plug#readme"
+}

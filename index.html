@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+<head>
+    <meta charset="UTF-8">
+    <title>vf-gui-plug</title>
+</head>
+
+<body>
+    <div id="px-render"></div>
+
+    <script src="libs/require.min.js"></script>
+    <script src="libs/pixi-v5.2.0/pixi-legacy.js"></script> 
+    <script src="libs/pixi-sound-v3.0.4/pixi-sound.js"></script>
+    <script src="libs/vf-gui-v1.1.12/vf-gui.js"></script>
+    <script src="index.js"></script>
+    <script type="module">
+        
+        var scene = getScene();
+
+        //路径，类名
+        importScript('./packages/testButton/src/TestButton.js','TestButton',(value)=>{
+
+            let button = new value();
+            button.color = '0xffffff';
+            button.text = "gui 插件示例";
+            button.x = 100;
+            button.y = 100;
+            scene.addChild(button);
+            console.log(value);
+        });
+    </script>
+</body>
+
+</html>
+

@@ -19,6 +19,7 @@ export class TestButton extends gui.DisplayObject{
         this._text = value;
         this.invalidateSize();
         this.invalidateDisplayList(); //触发更新显示列表
+        this.alpha
     }
 
     /**

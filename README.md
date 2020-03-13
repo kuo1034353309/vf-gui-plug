@@ -22,3 +22,27 @@ node node_modules/uglify-js/bin/uglifyjs file.js -o file.min.js
 打包方式为 umd , 不支持多文件导入。
 
 由于是裸鞋ts，并且输出是es5，所以，请不要写es6的东西。
+
+## vf使用
+
+资源中，添加相关的js路径，name为类名，type类型为js
+
+组件中，可以初始化插件，type为name类名
+
+```
+"assets": {
+        "id":{
+            "name": "TestButton",
+            "type": "js",
+            "url": "http://www.xxxx.com/TestButton.js"
+        },
+}
+
+"components": {
+    "id": {
+        "name": "xxxx",
+        "type": "TestButton",
+        "text": "11111"
+    },
+}
+```

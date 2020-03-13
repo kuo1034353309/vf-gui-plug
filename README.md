@@ -19,9 +19,11 @@ node node_modules/uglify-js/bin/uglifyjs file.js -o file.min.js
 
 ## 注意
 
-打包方式为 umd , 不支持多文件导入。
+1.类名与文件命名保持一致
 
-由于是裸鞋ts，并且输出是es5，所以，请不要写es6的东西。
+2.打包方式为 umd , 不支持多文件导入。
+
+3.由于是裸鞋ts，并且输出是es5，所以，请不要写es6的东西。
 
 ## vf使用
 

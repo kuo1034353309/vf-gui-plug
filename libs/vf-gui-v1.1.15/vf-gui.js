@@ -109,6 +109,9 @@ exports.DisplayObject = DisplayObject_1.DisplayObject;
 /** 心跳，需要在初始化完成后，启动心跳更新 */
 var Ticker_1 = __webpack_require__(/*! ./core/Ticker */ "./src/core/Ticker.ts");
 exports.TickerShared = Ticker_1.shared;
+/** 滤镜的基础类 */
+var Filter_1 = __webpack_require__(/*! ./core/Filter */ "./src/core/Filter.ts");
+exports.Filter = Filter_1.Filter;
 /**
  * 基础容器
  *
@@ -2489,6 +2492,41 @@ var DisplayObjectAbstract = /** @class */ (function (_super) {
     return DisplayObjectAbstract;
 }(PIXI.utils.EventEmitter));
 exports.DisplayObjectAbstract = DisplayObjectAbstract;
+
+
+/***/ }),
+
+/***/ "./src/core/Filter.ts":
+/*!****************************!*\
+  !*** ./src/core/Filter.ts ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var Filter = /** @class */ (function (_super) {
+    __extends(Filter, _super);
+    function Filter(vertexSrc, fragmentSrc, uniforms) {
+        return _super.call(this, vertexSrc, fragmentSrc, uniforms) || this;
+    }
+    return Filter;
+}(PIXI.Filter));
+exports.Filter = Filter;
 
 
 /***/ }),
@@ -8592,8 +8630,13 @@ function updateBasicDisplayList(target, unscaledWidth, unscaledHeight) {
         return;
     //console.log(target.container.name);
     var values = target.$values;
-    var parentWidth = target.parent ? target.parent.$values[UIKeys.width] : 1;
-    var parentHeight = target.parent ? target.parent.$values[UIKeys.height] : 1;
+    var parentValues = target.parent ? target.parent.$values : undefined;
+    var parentWidth = 1;
+    var parentHeight = 1;
+    if (parentValues) {
+        parentWidth = parentValues[UIKeys.width] || parentValues[UIKeys.explicitWidth] || 1;
+        parentHeight = parentValues[UIKeys.height] || parentValues[UIKeys.explicitHeight] || 1;
+    }
     var hCenter = formatRelative(values[UIKeys.horizontalCenter], parentWidth * 0.5);
     var vCenter = formatRelative(values[UIKeys.verticalCenter], parentHeight * 0.5);
     var left = formatRelative(values[UIKeys.left], parentWidth || 1);
@@ -12393,10 +12436,10 @@ var vfgui = __webpack_require__(/*! ./UI */ "./src/UI.ts");
 //     }
 // }
 // String.prototype.startsWith || (String.prototype.startsWith = function(word,pos?: number) {
-//     return this.lastIndexOf(word, pos1.1.12.1.1.12.1.1.12) ==1.1.12.1.1.12.1.1.12;
+//     return this.lastIndexOf(word, pos1.1.15.1.1.15.1.1.15) ==1.1.15.1.1.15.1.1.15;
 // });
 window.gui = vfgui;
-window.gui.version = "1.1.12";
+window.gui.version = "1.1.15";
 exports.default = vfgui;
 // declare namespace gui{
 //     export * from "src/UI";

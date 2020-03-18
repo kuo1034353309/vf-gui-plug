@@ -2664,6 +2664,15 @@ declare module 'utils/Utils' {
 	}): number;
 
 }
+declare module 'core/Filter' {
+	/// <reference types="pixi.js" />
+	export class Filter extends PIXI.Filter {
+	    constructor(vertexSrc?: string, fragmentSrc?: string, uniforms?: {
+	        [key: string]: any;
+	    });
+	}
+
+}
 declare module 'display/Container' {
 	import { DisplayObject } from 'core/DisplayObject';
 	/**
@@ -3676,6 +3685,47 @@ declare module 'event/Index' {
 	export { ComponentEvent, InteractionEvent, TouchMouseEvent, TweenEvent, SchedulerEvent };
 
 }
+declare module 'event/EventType' {
+	export const enum EventType {
+	    /**
+	     * 状态变化 ：IVFData -> VFStateCode
+	     */
+	    STATUS = "status",
+	    /**
+	     * 推送消息到外部
+	     */
+	    MESSAGE = "message",
+	    /**
+	     * 接收外部消息
+	     */
+	    ONMESSAGE = "onMessage",
+	    /**
+	     * 通用状态变化
+	     */
+	    STATE = "state",
+	    /**
+	     * 启动/开始
+	     */
+	    START = "start",
+	    /**
+	     * 心跳
+	     */
+	    TICK = "tick",
+	    /**
+	     * 更新
+	     */
+	    UPDATE = "update",
+	    /**
+	     * 已改变
+	     */
+	    CHANGED = "changed",
+	    /**
+	     * 结束
+	     */
+	    END = "end"
+	}
+
+}
 declare module 'event/EventLevel' {
 	/**
 	 * status: 状态变化
@@ -3728,7 +3778,7 @@ declare module 'core/Scheduler' {
 	export class Scheduler extends PIXI.utils.EventEmitter {
 	    readonly id: number;
 	    static clock: () => number;
-	    static ticker: TAny;
+	    static ticker: any;
 	    static setInterval(time: number, listener: () => void): Scheduler;
 	    static setTimeout(time: number, listener: () => void): Scheduler;
 	    interval: number;
@@ -3750,7 +3800,7 @@ declare module 'core/Scheduler' {
 	    resume(): void;
 	    seek(time: number): void;
 	    isTickable(num: number): boolean;
-	    protected noop(evt?: TAny): void;
+	    protected noop(evt?: any): void;
 	    private run;
 	}
 
@@ -3764,6 +3814,8 @@ declare module 'UI' {
 	import { DisplayObject } from 'core/DisplayObject';
 	/** 心跳，需要在初始化完成后，启动心跳更新 */
 	import { shared as TickerShared } from 'core/Ticker';
+	/** 滤镜的基础类 */
+	import { Filter } from 'core/Filter';
 	/**
 	 * 基础容器
 	 *
@@ -3969,7 +4021,7 @@ declare module 'UI' {
 	import * as Enum from 'enum/Index';
 	import { Scheduler } from 'core/Scheduler';
 	/** 请不要在编写UI组件内部使用本类 */
-	export { Utils, Stage, Container, ScrollingContainer, Slider, Label, TextInput, Button, CheckBox, Rect, Circle, Graphics, FollowLine, ConnectLine, Interaction, DisplayObject, TickerShared, Tween, Timeline, Easing, Image, SpriteAnimated, Sound, Event, Enum, Scheduler };
+	export { Filter, Utils, Stage, Container, ScrollingContainer, Slider, Label, TextInput, Button, CheckBox, Rect, Circle, Graphics, FollowLine, ConnectLine, Interaction, DisplayObject, TickerShared, Tween, Timeline, Easing, Image, SpriteAnimated, Sound, Event, Enum, Scheduler };
 
 }
 declare module 'vf-gui' {

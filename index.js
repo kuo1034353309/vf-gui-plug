@@ -26,18 +26,23 @@ function getScene() {
 
 
 function checkModule(){
-    if(window.require === undefined){
-        window.require = function(){};
-    }
 
+    if(window.require === undefined){
+        window.require = function(v){console.log(v)};
+    }
+    if(window.exports === undefined){
+        window.exports = {};
+    }
     if(window.module === undefined){
         window.module = {};
     }
     if(window.module.exports === undefined){
         window.module.exports = {};
-        window.exports = window.module.exports;
     }
+
 }
+
+
 /**
  * 加载script js 或js模块
  * 1. 支持普通的全局js加载，常规script标签方式引入
@@ -77,8 +82,11 @@ function importScript(url,moduleName,callBack){
 
         
         if(moduleName){
-            _namespace[moduleName] = window.exports[moduleName];
-            return callBack(_namespace[moduleName] );
+            if(window.module.exports.hasOwnProperty(moduleName)){
+                _namespace[moduleName] = window.module.exports[moduleName];
+                return callBack(_namespace[moduleName]);
+            }
+            return callBack(undefined);
         }
         return callBack(true);
     };

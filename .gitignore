@@ -33,7 +33,9 @@ docs/
 
 
 /menu
-dist/test.js
-dist/test.js.map
-dist/src/
-dist/test/
+
+packages/*/src/*.d.ts
+packages/*/src/*.js
+packages/*/src/*.js.map
+
+dist/

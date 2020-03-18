@@ -2,13 +2,11 @@
   "name": "vf-gui-plug",
   "version": "0.0.1",
   "description": "",
-  "main": "",
   "scripts": {
-    "build": "tsc -m umd && node node_modules/uglify-js/bin/uglifyjs --help",
-    "watch": "tsc -watch -m umd"
+    "dev": "webpack --config ./config/dev.js --watch",
+    "prod": "webpack --config ./config/prod.js"
   },
-  "keywords": [
-  ],
+  "keywords": [],
   "files": [
     "package.json",
     "README.md"
@@ -17,7 +15,14 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "uglify-js": "^3.8.0"
+    "@types/node": "^13.9.1",
+    "raw-loader": "^4.0.0",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.8.3",
+    "url-loader": "^3.0.0",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   },
   "repository": {
     "type": "git",

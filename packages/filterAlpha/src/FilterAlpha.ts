@@ -2,14 +2,11 @@ import fragment from './fragment.glsl';
 export class FilterAlpha extends gui.Filter
 {
     /**
-     * @param {number} [alpha=1] Amount of alpha from 0 to 1, where 0 is transparent
+     * 构造函数不能包含任何参数，需要以set get实现
      */
-    constructor(alpha = 1.0)
+    constructor()
     {
-        super(PIXI.defaultFilterVertex, fragment, { uAlpha: 1 });
-
-        this.alpha = alpha;
-        
+        super(gui.Filter.defaultFilterVertex, fragment, { uAlpha: 1 });
     }
 
     /**

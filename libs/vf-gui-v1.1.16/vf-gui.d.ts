@@ -2667,8 +2667,9 @@ declare module 'utils/Utils' {
 declare module 'core/Filter' {
 	/// <reference types="pixi.js" />
 	export class Filter extends PIXI.Filter {
+	    static defaultFilterVertex: string;
 	    constructor(vertexSrc?: string, fragmentSrc?: string, uniforms?: {
-	        [key: string]: any;
+	        [key: string]: TAny;
 	    });
 	}
 

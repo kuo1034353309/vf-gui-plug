@@ -1978,6 +1978,7 @@ var CSSLayout_1 = __webpack_require__(/*! ../layout/CSSLayout */ "./src/layout/C
 var UIBaseDrag_1 = __webpack_require__(/*! ./plugs/UIBaseDrag */ "./src/core/plugs/UIBaseDrag.ts");
 var Utils_1 = __webpack_require__(/*! ../utils/Utils */ "./src/utils/Utils.ts");
 var UIClick_1 = __webpack_require__(/*! ./plugs/UIClick */ "./src/core/plugs/UIClick.ts");
+var UI_1 = __webpack_require__(/*! ../UI */ "./src/UI.ts");
 /**
  * UI的顶级类，基础的UI对象
  *
@@ -2001,6 +2002,9 @@ var DisplayObject = /** @class */ (function (_super) {
         _this.dragThreshold = 0;
         /** 拖动时，事件流是否继续传输 */
         _this.dragStopPropagation = true;
+        _this._filterProxy = {};
+        _this._filterMap = new Map();
+        _this._filterCount = 0;
         _this.grayscaleFilterValue = 0;
         /**
         *  在不同分辨率下保持像素稳定
@@ -2122,6 +2126,42 @@ var DisplayObject = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(DisplayObject.prototype, "filter", {
+        get: function () {
+            if (this._filterCount !== UI_1.Filter.list.size) {
+                this._filterCount = UI_1.Filter.list.size;
+                var _a = this, _filterProxy_1 = _a._filterProxy, _filterMap_1 = _a._filterMap;
+                if (this.container.filters == null) {
+                    this.container.filters = [];
+                }
+                var containerFilters_1 = this.container.filters;
+                UI_1.Filter.list.forEach(function (cls, key) {
+                    if (!_filterMap_1.has(key)) {
+                        var filter_1 = new cls();
+                        _filterMap_1.set(key, filter_1);
+                        containerFilters_1.push(filter_1);
+                        Object.defineProperty(_filterProxy_1, key, {
+                            get: function () {
+                                return filter_1;
+                            },
+                            set: function (val) {
+                                if (val == null || val == '') {
+                                    var index = containerFilters_1.indexOf(filter_1);
+                                    if (index >= 0) {
+                                        containerFilters_1.splice(index, 1);
+                                    }
+                                    _filterMap_1.delete(key);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            return this._filterProxy;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(DisplayObject.prototype, "filterBlur", {
         get: function () {
             return this.blurFilter ? this.blurFilter.blur : 0;
@@ -2195,7 +2235,9 @@ var DisplayObject = /** @class */ (function (_super) {
         _super.prototype.load.call(this);
     };
     DisplayObject.prototype.release = function () {
-        var _a = this, container = _a.container, $mask = _a.$mask, $background = _a.$background;
+        var _a = this, container = _a.container, $mask = _a.$mask, $background = _a.$background, _filterMap = _a._filterMap;
+        container.filters = [];
+        _filterMap.clear();
         if (this._style) {
             this._style.release();
             this._style = undefined;
@@ -2524,6 +2566,9 @@ var Filter = /** @class */ (function (_super) {
     function Filter(vertexSrc, fragmentSrc, uniforms) {
         return _super.call(this, vertexSrc, fragmentSrc, uniforms) || this;
     }
+    Filter.isFilter = true;
+    Filter.defaultFilterVertex = PIXI.defaultFilterVertex;
+    Filter.list = new Map();
     return Filter;
 }(PIXI.Filter));
 exports.Filter = Filter;
@@ -12436,10 +12481,10 @@ var vfgui = __webpack_require__(/*! ./UI */ "./src/UI.ts");
 //     }
 // }
 // String.prototype.startsWith || (String.prototype.startsWith = function(word,pos?: number) {
-//     return this.lastIndexOf(word, pos1.1.15.1.1.15.1.1.15) ==1.1.15.1.1.15.1.1.15;
+//     return this.lastIndexOf(word, pos1.1.16.1.1.16.1.1.16) ==1.1.16.1.1.16.1.1.16;
 // });
 window.gui = vfgui;
-window.gui.version = "1.1.15";
+window.gui.version = "1.1.16";
 exports.default = vfgui;
 // declare namespace gui{
 //     export * from "src/UI";

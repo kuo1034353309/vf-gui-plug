@@ -29,6 +29,7 @@ npm run prod
 组件中，可以初始化插件，type为name类名
 
 ```
+// 资源路径设置
 "assets": {
         "id":{
             "name": "TestButton",
@@ -37,6 +38,7 @@ npm run prod
         },
 }
 
+// gui 自定义组件创建
 "components": {
     "id": {
         "name": "xxxx",
@@ -44,4 +46,11 @@ npm run prod
         "text": "11111"
     },
 }
+
+// gui 滤镜使用
+组件.filter.自定义滤镜类名.自定义属性 = 0.5; //关键句
 ```
+
+## 约定
+
+滤镜插件与组件插件，构造函数不能包含任何参数

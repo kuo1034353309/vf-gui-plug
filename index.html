@@ -12,22 +12,33 @@
     <!-- <script src="libs/require.min.js"></script> -->
     <script src="libs/pixi-v5.2.0/pixi-legacy.js"></script> 
     <script src="libs/pixi-sound-v3.0.4/pixi-sound.js"></script>
-    <script src="libs/vf-gui-v1.1.15/vf-gui.js"></script>
+    <script src="libs/vf-gui-v1.1.16/vf-gui.js"></script>
     <script src="index.js"></script>
+
     <script type="module">
         
         var scene = getScene();
 
-        //路径，类名
-        importScript('./dist/FilterAlpha.js','FilterAlpha',(value)=>{
+        //组件插件 路径，类名 
+        // importScript('./dist/TestButton.js','TestButton',(value,className)=>{
+        //     let button = new gui.TestButton();
+        //     button.color = '0xffffff';
+        //     button.text = "这是 gui 组件插件";
+        //     button.x = 100;
+        //     button.y = 100;
+        //     scene.addChild(button);
+        // });
+
+
+        //滤镜插件 路径，类名 
+        importScript('./dist/FilterAlpha.js','FilterAlpha',(value,className)=>{
             let button = new gui.Button();
+            button.filter.FilterAlpha.alpha = 0.5; //关键句
             button.color = '0xffffff';
-            button.text = "gui 插件112示11例";
+            button.text = "这是 gui 滤镜插件";
             button.x = 100;
             button.y = 100;
-            button.container.filters = [new value(0.5)];
             scene.addChild(button);
-            console.log(value);
         });
     </script>
 </body>

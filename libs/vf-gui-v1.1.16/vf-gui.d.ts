@@ -2437,6 +2437,10 @@ declare module 'core/DisplayObject' {
 	     */
 	    private _blendMode;
 	    blendMode: PIXI.BLEND_MODES | undefined;
+	    private _filterProxy;
+	    private _filterMap;
+	    private _filterCount;
+	    readonly filter: any;
 	    /**
 	     * 设置Blur XY的模糊强度
 	     *
@@ -2667,7 +2671,9 @@ declare module 'utils/Utils' {
 declare module 'core/Filter' {
 	/// <reference types="pixi.js" />
 	export class Filter extends PIXI.Filter {
+	    static isFilter: boolean;
 	    static defaultFilterVertex: string;
+	    static list: Map<string, boolean>;
 	    constructor(vertexSrc?: string, fragmentSrc?: string, uniforms?: {
 	        [key: string]: TAny;
 	    });

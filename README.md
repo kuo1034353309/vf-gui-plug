@@ -54,7 +54,7 @@ npm run prod
 
 ### gui 滤镜
 
-``
+```
 // 资源路径设置
 "assets": {
         "id":{

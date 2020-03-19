@@ -64,7 +64,7 @@ npm run prod
         },
 }
 
-// gui 滤镜使用
+// gui 滤镜使用 (vfx)
 组件.filter.FilterAlpha.alpha = 0.5; 
 
 组件.filter.自定义滤镜类名.自定义属性 = 值;

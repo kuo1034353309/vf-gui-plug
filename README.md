@@ -28,6 +28,7 @@ npm run prod
 
 组件中，可以初始化插件，type为name类名
 
+### gui 组件
 ```
 // 资源路径设置
 "assets": {
@@ -49,6 +50,24 @@ npm run prod
 
 // gui 滤镜使用
 组件.filter.自定义滤镜类名.自定义属性 = 0.5; //关键句
+```
+
+### gui 滤镜
+
+``
+// 资源路径设置
+"assets": {
+        "id":{
+            "name": "FilterAlpha",
+            "type": "js",
+            "url": "http://www.xxxx.com/FilterAlpha.js"
+        },
+}
+
+// gui 滤镜使用
+组件.filter.FilterAlpha.alpha = 0.5; 
+
+组件.filter.自定义滤镜类名.自定义属性 = 值;
 ```
 
 ## 约定

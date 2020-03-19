@@ -32,10 +32,9 @@
 
         //滤镜插件 路径，类名 
         importScript('./dist/FilterAlpha.js','FilterAlpha',(value,className)=>{
-            let button = new gui.Button();
-            button.filter.FilterAlpha.alpha = 0.5; //关键句
-            button.color = '0xffffff';
-            button.text = "这是 gui 滤镜插件";
+            let button = new gui.Image();
+            button.filter.FilterAlpha.alpha = 11; //关键句
+            button.src = "assets/dino.png";
             button.x = 100;
             button.y = 100;
             scene.addChild(button);

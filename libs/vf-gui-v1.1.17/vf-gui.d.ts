@@ -2117,11 +2117,8 @@ declare module 'layout/CSSStyle' {
 	    maskSize: number[] | undefined;
 	    /**
 	     * 设置滤镜
-	     *
-	     * 支持 blur(number)
 	     */
-	    private _filter?;
-	    filter: string | undefined;
+	    filter: TAny;
 	    /**
 	     * 设置鼠标样式
 	     */
@@ -2418,6 +2415,8 @@ declare module 'core/DisplayObject' {
 	     * 设置拖动
 	     */
 	    dragOption: UIBaseDrag;
+	    /** 是否开启鼠标或触摸点击，开启后，接收TouchMouseEvent */
+	    interactabled: boolean;
 	    /** 是否开启鼠标或触摸点击，开启后，接收TouchMouseEvent */
 	    isClick: boolean;
 	    /**

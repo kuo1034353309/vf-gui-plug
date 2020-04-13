@@ -1,14 +1,14 @@
-export class TestButton extends gui.DisplayObject{
+export class TestButton extends vf.gui.DisplayObject{
 
     public constructor(text = "") {
         super();
         
-        this.sprite = new PIXI.Text(text,{breakWords : true,fill:"#ffffff"}); //PIXI基础组件
+        this.sprite = new vf.Text(text,{breakWords : true,fill:"#ffffff"}); //VF基础组件
         this.container.addChild(this.sprite); //容器
 
     }
 
-    public readonly sprite: PIXI.Text;
+    public readonly sprite: vf.Text;
     private _text:string = '';
     /**
      * 文本内容

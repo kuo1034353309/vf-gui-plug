@@ -1,12 +1,12 @@
 import fragment from './fragment.glsl';
-export class FilterAlpha extends gui.Filter
+export class FilterAlpha extends vf.gui.Filter
 {
     /**
      * 构造函数不能包含任何参数，需要以set get实现
      */
     constructor()
     {
-        super(gui.Filter.defaultFilterVertex, fragment, { uAlpha: 1 });
+        super(vf.gui.Filter.defaultFilterVertex, fragment, { uAlpha: 1 });
     }
 
     /**

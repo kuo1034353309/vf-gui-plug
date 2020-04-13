@@ -1,7 +1,7 @@
 
 function getScene() {
 
-    var app = new PIXI.Application({ 
+    var app = new vf.Application({ 
         width: window.innerWidth, 
         height: window.innerHeight,
         antialias:true,

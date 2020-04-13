@@ -16,6 +16,8 @@
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^13.9.1",
+    "@vf.js/gui": "^1.2.4",
+    "@vf.js/vf": "^5.2.1-v10",
     "raw-loader": "^4.0.0",
     "ts-loader": "^6.2.1",
     "typescript": "^3.8.3",

@@ -2,6 +2,7 @@ export class TestButton extends gui.DisplayObject{
 
     public constructor(text = "") {
         super();
+        
         this.sprite = new PIXI.Text(text,{breakWords : true,fill:"#ffffff"}); //PIXI基础组件
         this.container.addChild(this.sprite); //容器
 

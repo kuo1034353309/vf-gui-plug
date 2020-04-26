@@ -1,12 +1,10 @@
 const path = require('path');
+const fs = require('fs');
 
 module.exports = {
     mode: 'development',//production,development
     devtool: 'source-map',
-    entry: {
-        FilterAlpha: './packages/filterAlpha/src/FilterAlpha.ts',
-        TestButton: './packages/testButton/src/TestButton.ts',
-    },
+    entry: {},
     module: {
         rules: [
             {
@@ -45,9 +43,15 @@ module.exports = {
     },
     output: {
         filename: '[name].js',
-        library: ['vf','gui','plugs','module'],
+        library: ['vf','gui','module'],
         libraryTarget: "umd",
         path: path.resolve(__dirname, `../dist/`),
     },
     plugins: [],
 };
+
+const basePackages = path.resolve(__dirname,'../packages/');
+const packages = fs.readdirSync(basePackages);
+packages.forEach(element => {
+    module.exports.entry[element] = basePackages + '/' +element + '/src/index.ts';
+});

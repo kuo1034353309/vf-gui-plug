@@ -57,11 +57,12 @@ function checkModule(){
  * 
  */
 function importScript(url,moduleName,callBack){
-
-    var _namespace = gui;
     
-    checkModule();
+    var _namespace = vf.gui;
     
+    if(_namespace[moduleName]){
+        throw new Error('模块命名冲突');
+    }
 
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -80,15 +81,15 @@ function importScript(url,moduleName,callBack){
         script.removeEventListener('load', loadCallback, false);
         script.removeEventListener('error', loadError, false);
 
-        const plugs = vf.gui.plugs;
+        const module = _namespace.module;
         if(moduleName){
-            if(plugs.module.hasOwnProperty(moduleName)){
-                vf.gui.plugs[moduleName] = plugs.module[moduleName];
-                plugs.module = null;
-                if(vf.gui.plugs[moduleName].isFilter){
-                    vf.gui.Filter.list.set(moduleName,vf.gui.plugs[moduleName]);
+            if(module.hasOwnProperty(moduleName)){
+                _namespace[moduleName] = module[moduleName];
+                _namespace.module = null;
+                if(_namespace[moduleName].isFilter){
+                    _namespace.Filter.list.set(moduleName,_namespace[moduleName]);
                 }
-                return callBack(vf.gui.plugs[moduleName],moduleName);
+                return callBack(_namespace[moduleName],moduleName);
             }
             return callBack(undefined);
         }

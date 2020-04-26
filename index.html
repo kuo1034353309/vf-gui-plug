@@ -19,14 +19,14 @@
         var scene = getScene();
 
         //组件插件 路径，类名 
-        // importScript('./dist/TestButton.js','TestButton',(value,className)=>{
-        //     let button = new gui.TestButton();
-        //     button.color = '0xffffff';
-        //     button.text = "这是 gui 组件插件";
-        //     button.x = 100;
-        //     button.y = 100;
-        //     scene.addChild(button);
-        // });
+        importScript('./dist/TestButton.js','TestButton',(value,className)=>{
+            let button = new gui.TestButton();
+            button.color = '0xffffff';
+            button.text = "这是 gui 组件插件";
+            button.x = 100;
+            button.y = 100;
+            scene.addChild(button);
+        });
 
 
         //滤镜插件 路径，类名 

@@ -45,7 +45,7 @@ module.exports = {
     },
     output: {
         filename: '[name].js',
-        library: ['vf','gui','plugs'],
+        library: ['vf','gui','plugs','module'],
         libraryTarget: "umd",
         path: path.resolve(__dirname, `../dist/`),
     },

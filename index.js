@@ -27,18 +27,18 @@ function getScene() {
 
 function checkModule(){
 
-    if(window.require === undefined){
-        window.require = function(v){console.log(v)};
-    }
-    if(window.exports === undefined){
-        window.exports = {};
-    }
-    if(window.module === undefined){
-        window.module = {};
-    }
-    if(window.module.exports === undefined){
-        window.module.exports = {};
-    }
+    // if(window.require === undefined){
+    //     window.require = function(v){console.log(v)};
+    // }
+    // if(window.exports === undefined){
+    //     window.exports = {};
+    // }
+    // if(window.module === undefined){
+    //     window.module = {};
+    // }
+    // if(window.module.exports === undefined){
+    //     window.module.exports = {};
+    // }
 
 }
 
@@ -82,10 +82,10 @@ function importScript(url,moduleName,callBack){
 
         
         if(moduleName){
-            if(window.module.exports.hasOwnProperty(moduleName)){
-                _namespace[moduleName] = window.module.exports[moduleName];
+            if(vf.gui.plugs.hasOwnProperty(moduleName)){
+                _namespace[moduleName] = vf.gui.plugs[moduleName];
                 if(_namespace[moduleName].isFilter){
-                    gui.Filter.list.set(moduleName,_namespace[moduleName]);
+                    vf.gui.Filter.list.set(moduleName,_namespace[moduleName]);
                 }
                 return callBack(_namespace[moduleName],moduleName);
             }

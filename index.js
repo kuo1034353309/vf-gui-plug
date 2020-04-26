@@ -80,14 +80,15 @@ function importScript(url,moduleName,callBack){
         script.removeEventListener('load', loadCallback, false);
         script.removeEventListener('error', loadError, false);
 
-        
+        const plugs = vf.gui.plugs;
         if(moduleName){
-            if(vf.gui.plugs.hasOwnProperty(moduleName)){
-                _namespace[moduleName] = vf.gui.plugs[moduleName];
-                if(_namespace[moduleName].isFilter){
-                    vf.gui.Filter.list.set(moduleName,_namespace[moduleName]);
+            if(plugs.module.hasOwnProperty(moduleName)){
+                vf.gui.plugs[moduleName] = plugs.module[moduleName];
+                plugs.module = null;
+                if(vf.gui.plugs[moduleName].isFilter){
+                    vf.gui.Filter.list.set(moduleName,vf.gui.plugs[moduleName]);
                 }
-                return callBack(_namespace[moduleName],moduleName);
+                return callBack(vf.gui.plugs[moduleName],moduleName);
             }
             return callBack(undefined);
         }

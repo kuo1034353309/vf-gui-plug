@@ -8,8 +8,6 @@
 
 4. packages 目录中建立相关 ts 文件 , 参考 testButton 示例
 
-3. 修改或添加 ./config/base.js 中 entry 为所需要编译的文件
-
 3. 执行 npm run dev 开启监听
 
 4. 修改 index.html 中 importScript 路径为当前修改示例路径。
@@ -21,6 +19,8 @@
 ## 发布
 
 npm run prod
+
+> 通过pull request合并到master，请确保你的的组件与内部业务无关，如涉及不可公开业务，请提交自有公司仓库
 
 ## vf使用
 

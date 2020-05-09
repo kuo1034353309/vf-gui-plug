@@ -11,12 +11,6 @@ export class TextGroup extends vf.gui.DisplayObject {
     private _optionId: number = 0; //选项id
     private _groupId: number = 0; //radio时选项组
 
-
-    private _optionType: string = "single"; //single-单选   multiple-多选   radio-选项互斥   blank-填空
-    public set optionType(value: string) {
-        this._optionType = value;
-    }
-
     /**
      * 每个选项的状态
      * {
@@ -25,12 +19,14 @@ export class TextGroup extends vf.gui.DisplayObject {
      * }
      */
     private _optionStatusList: any[] = [];
-    public set optionStatusList(value: any){
-        this._optionStatusList = vf.gui.Utils.deepCopy(value);
-    }
 
     /**
-     * 组件样式
+     * 正确答案
+     */
+    private _optionAnswer: any[] = [];
+
+    /**
+     * 组件配置
      */
     private _config: any = {
         lineHeight: 80,
@@ -46,31 +42,43 @@ export class TextGroup extends vf.gui.DisplayObject {
         containerWidth: 1000,
         optionBoardLineWidth: 2,
         optionBlankLineWidth: 5,
+        optionBlankMinSize: 20,
         optionRightColor: 0x00ff00,
         optionWrongColor: 0xff0000,
         optionRightIcon: './assets/right.png',
         optionWrongIcon: './assets/wrong.png',
         optionRightMissingIcon: './assets/right-miss.png',
-        optionIconSize: 15
+        optionIconSize: 15,
+        optionType: 'single',//single-单选   multiple-多选   radio-选项互斥   blank-填空
+        targetOption: null,
+        selectOption: null
     }
 
     public set config(value: any){
         this._config = Object.assign(this._config, value);
+        this.parseTemplateData();
     }
 
     public get config(){
         return this._config;
     }
 
+    private _checkResult: boolean = false;
+    public set checkResult(value: boolean){
+        this._checkResult = value;
+        this.dealCheckResult();
+        this.parseText();
+    }
+
     /**
      * 文本内容
      */
     private _text: string = "";
-    public set text(value: string) {
+    private set text(value: string) {
         this._text = value;
         this.parseText();
     }
-    public get text() {
+    private get text() {
         return this._text;
     }
 
@@ -80,6 +88,35 @@ export class TextGroup extends vf.gui.DisplayObject {
     public set selectedOptionId(value: number) {
         this._selectedOptionId = value;
         this.checkOptionSelected(value);
+    }
+
+    /**
+     * 解析模板data
+     */
+    private parseTemplateData(){
+        console.log('parseTemplateData')
+        if(!this.config.targetOption || !this.config.selectOption) return;
+        if(this.config.optionType == 'blank'){
+            let text = this.config.targetOption.text;
+            //填空题要解析
+            this.text = text;//触发解析
+        }
+        else{
+            let text = this.config.targetOption.text;
+            //有多少选项就有多少个空，必须匹配
+            for(let i = 0; i < this.config.selectOption.length; ++i){
+                let item = this.config.selectOption[i];
+                let option = `{${item.text}}`;
+                text = text.replace(/{}/, option);
+            }
+            let answerStr = this.config.targetOption.key;
+            let arr = answerStr.split(',');
+            for(let i = 0; i < arr.length; ++i){
+                let answer = this.config.selectOption.find((item: { key: any; }) => item.key == arr[i]);
+                this._optionAnswer.push(answer.text.trim());
+            }
+            this.text = text;//触发解析
+        }
     }
 
     private reset(){
@@ -100,7 +137,7 @@ export class TextGroup extends vf.gui.DisplayObject {
         this._originBlockTextList.forEach((item) => {
             //判断是否带{}
             if (item.indexOf("{") !== -1 && item.indexOf("}") !== -1) {
-                if(this._optionStatusList.length > 0){
+                if(this._checkResult){
                     //选项验证,不可点击
                     this.dealCheckedOption(item);
                 }
@@ -113,6 +150,7 @@ export class TextGroup extends vf.gui.DisplayObject {
         });
 
         //注册点击事件
+        console.log('_optionList----', this._optionList);
         this._optionList.forEach((item) => {
             let interactObj: vf.gui.DisplayObject = item.interactObj as vf.gui.DisplayObject;
             interactObj.interactabled = true;
@@ -133,7 +171,7 @@ export class TextGroup extends vf.gui.DisplayObject {
         });
 
         //判断是单选还是多选
-        if (this._optionType == "single") {
+        if (this.config.optionType == "single") {
             //已经选中的重置
             let selectedOption = this._optionList.find((item) => {
                 return !!item.selected;
@@ -145,14 +183,14 @@ export class TextGroup extends vf.gui.DisplayObject {
             }
 
             this.onSelected(option);
-        } else if (this._optionType == "multiple") {
+        } else if (this.config.optionType == "multiple") {
             if (option.selected) {
                 //已选中，重置状态
                 this.onUnSelected(option);
             } else {
                 this.onSelected(option);
             }
-        } else if (this._optionType == "radio") {
+        } else if (this.config.optionType == "radio") {
             //互斥型的，找到同一组的，重置状态
             for(let i = 0; i < this._optionList.length; ++i){
                 let groupOption = this._optionList[i];
@@ -165,7 +203,7 @@ export class TextGroup extends vf.gui.DisplayObject {
             if(!option.selected){
                 this.onSelected(option);
             }
-        } else if (this._optionType == "blank") {
+        } else if (this.config.optionType == "blank") {
             //已经选中的重置
             let selectedOption = this._optionList.find((item) => {
                 return !!item.selected;
@@ -185,7 +223,7 @@ export class TextGroup extends vf.gui.DisplayObject {
         option.selected = true;
         let rect = option.displayObj as vf.gui.Rect;
         rect.getChildAt(0).visible = true;
-        if(this._optionType != 'blank'){
+        if(this.config.optionType != 'blank'){
             option.label.style.color = this.config.textSelectedColor;
         }
 
@@ -205,7 +243,7 @@ export class TextGroup extends vf.gui.DisplayObject {
         option.selected = false;
         let rect: vf.gui.Rect = option.displayObj as vf.gui.Rect;
         rect.getChildAt(0).visible = false;
-        if(this._optionType != 'blank'){
+        if(this.config.optionType != 'blank'){
             option.label.style.color = this.config.textColor;
         }
         
@@ -222,41 +260,48 @@ export class TextGroup extends vf.gui.DisplayObject {
      * 处理选项
      */
     private dealOption(item: string) {
+        console.log('hahahah')
         item = item.replace(/[\{\}]/g, " ");
         let label = this.createLabel(item);
-        if (label.width + this._curPosX > this.config.containerWidth) {
+        let _width = label.width;
+        if(this.config.optionType != "blank"){
+            _width = this.config.optionBlankMinSize > label.width ? this.config.optionBlankMinSize : label.width;
+        }
+        
+        if (_width +  this.config.optionPaddingX * 2 > this.config.containerWidth) {
             //超过了，直接折行
             this._curPosY += this.config.lineHeight;
             this._curPosX = 0;
         }
         let displayObj: any = null;
         let interactObj: any = null;
-        if (this._optionType == "blank") {
+        if (this.config.optionType == "blank") {
             //填空题，默认文字颜色是选中颜色
             label.style.color = this.config.textSelectedColor;
-            displayObj = interactObj = this.createLine(label.width);
+            displayObj = interactObj = this.createLine(_width);
             this.addElement(displayObj, this._curPosX, this._curPosY + this.config.fontSize + 5);
-            interactObj = this.createTransparentRect(label.width, this.config.fontSize + this.config.optionPaddingY * 2);
+            interactObj = this.createTransparentRect(_width, this.config.fontSize + this.config.optionPaddingY * 2);
             this.addElement(interactObj, this._curPosX, this._curPosY - this.config.optionPaddingY);
+            this.addElement(label, this._curPosX + (_width - label.width) / 2, this._curPosY);
+            this._curPosX += _width;
         } else {
             displayObj = interactObj = this.createRect(label.width + this.config.optionPaddingX * 2, this.config.fontSize + this.config.optionPaddingY * 2);
             this.addElement(displayObj, this._curPosX, this._curPosY + this.config.fontSize / 2);
+            this.addElement(label, this._curPosX + this.config.optionPaddingX, this._curPosY);
+            this._curPosX += label.width + this.config.optionPaddingX * 2;
         }
         //添加到选项数组
         interactObj.name = this._optionId;
         let option = {
             id: this._optionId++,
-            groupId: this._groupId,
-            text: item,
+            groupId: this._groupId-1,
+            text: item.trim(),
             selected: false,
             displayObj: displayObj as vf.gui.Rect,
             interactObj: interactObj as vf.gui.DisplayObject,
             label: label
         };
         this._optionList.push(option);
-
-        this.addElement(label, this._curPosX + this.config.optionPaddingX, this._curPosY);
-        this._curPosX += label.width + this.config.optionPaddingX * 2;
     }
 
     /**
@@ -266,9 +311,9 @@ export class TextGroup extends vf.gui.DisplayObject {
         item = item.replace(/[\{\}]/g, " ");
         let label = this.createLabel(item);
         let _width = 0;
-        if(this._optionType != "blank" && this._optionStatusList[this._optionId].status != 'unselected_wrong'){
+        if(this.config.optionType != "blank" && this._optionStatusList[this._optionId].status != 'unselected_wrong'){
             //需要额外添加一个图标的宽度
-            _width = this.config.fontSize + this.config.optionPaddingX;
+            _width = this.config.fontSize / 4 + this.config.optionIconSize;
         }
         if (_width + label.width + this._curPosX > this.config.containerWidth) {
             //超过了，直接折行
@@ -278,7 +323,7 @@ export class TextGroup extends vf.gui.DisplayObject {
         let displayObj: any = null;
         let interactObj: any = null;
         let status = this._optionStatusList[this._optionId].status;
-        if (this._optionType == "blank") {
+        if (this.config.optionType == "blank") {
             //填空题，正确是绿色，错误是红色且添加删除线
             if(status == 'selected_right' || status == 'unselected_right'){
                 label.style.color = this.config.optionRightColor;
@@ -319,6 +364,59 @@ export class TextGroup extends vf.gui.DisplayObject {
         this._optionId++;
     }
 
+    /**
+     * 答题结果验证
+     */
+    private dealCheckResult(){
+        this._optionStatusList = [];
+        if(this.config.optionType == 'blank'){
+
+        }
+        else{
+            for(let i = 0; i < this._optionList.length; ++i){
+                let option = this._optionList[i];
+                let optionStatus: any = {};
+                this._optionStatusList.push(optionStatus);
+                if(option.selected){
+                    if(this.config.optionType == 'radio'){
+                        console.log(option.groupId, this._optionAnswer[option.groupId], option.text)
+                        if(this._optionAnswer[option.groupId] == option.text){
+                            optionStatus.status = 'selected_right';
+                        }
+                        else{
+                            optionStatus.status = 'selected_wrong';
+                        }
+                    }
+                    else{
+                        if(this._optionAnswer.includes(option.text)){
+                            optionStatus.status = 'selected_right';
+                        }
+                        else{
+                            optionStatus.status = 'selected_wrong';
+                        }
+                    }
+                }
+                else{
+                    if(this.config.optionType == 'radio'){
+                        if(this._optionAnswer[option.groupId] == option.text){
+                            optionStatus.status = 'unselected_right';
+                        }
+                        else{
+                            optionStatus.status = 'unselected_wrong';
+                        }
+                    }
+                    else{
+                        if(this._optionAnswer.includes(option.text)){
+                            optionStatus.status = 'unselected_right';
+                        }
+                        else{
+                            optionStatus.status = 'unselected_wrong';
+                        }
+                    }
+                }
+            }
+        }
+    }
     /**
      * 处理文本
      * @param flag  //是否遇难后直接折行

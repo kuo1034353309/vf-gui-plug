@@ -41,12 +41,19 @@ export class TextChoice extends vf.gui.DisplayObject {
             fontFamily: '',                       //文本字体
         },
         textSelectedColor: 0x5161bb,          //文本选中时的颜色
-        optionBackgroundColor: 0xe9ecfe,      //选项线条背景色
-        optionBoardColor: 0x7487ef,           //选项选中时的颜色
-        optionPaddingX: 0,                   //选项水平间隔
-        optionPaddingY: 15,                   //选项框竖直间隔
-        optionBoardLineWidth: 2,              //选项选中时边框线宽
+
+        optionSelectedBackgroundColor: 0xe9ecfe,      //选项选中时背景色
+        optionSelectedBoardColor: 0x7487ef,           //选项选中时边框颜色
+        optionSelectedBoardLineWidth: 3,              //选项选中时边框线宽
+        optionSelectedBackgroundRadius: 10,           //选项框选中时radius
+
+        optionBackgroundColor: 0xffffff,      //选项背景色
+        optionBoardColor: 0x999999,           //选项边框颜色
+        optionBoardLineWidth: 2,              //选项边框线宽
         optionBackgroundRadius: 10,           //选项框radius
+
+        optionPaddingX: 0,                    //选项水平间隔
+        optionPaddingY: 15,                   //选项框竖直间隔
         optionRightColor: 0x00ff00,           //选项正确颜色
         optionWrongColor: 0xff0000,           //选项错误颜色
         optionRightIcon: "./assets/right.png",                 //选项判定正确图标
@@ -68,6 +75,18 @@ export class TextChoice extends vf.gui.DisplayObject {
         return this._config;
     }
 
+    /*
+    *重新开始
+    */
+    public restart(){
+        this._resultKeyArr = [];
+        this._optionStatusList = [];
+        this._selectedTotal = 0;
+        this._optionAnswer = [];
+        this._checkResult = false;
+        this.parseTemplateData();
+    }
+
     /**
      * 验证结果
      */
@@ -75,8 +94,10 @@ export class TextChoice extends vf.gui.DisplayObject {
     public set checkResult(value: boolean) {
         if (this._checkResult) return;
         this._checkResult = value;
-        this.dealCheckResult();
-        this.parseText();
+        if(this._checkResult){
+            this.dealCheckResult();
+            this.parseText();
+        }
     }
 
     /**
@@ -153,6 +174,13 @@ export class TextChoice extends vf.gui.DisplayObject {
             interactObj.interactabled = true;
             interactObj.on("click", this.onClick, this);
         });
+
+        //挂载完成，回调
+        let data = {
+            width: this.config.containerWidth,
+            height: this._curPosY + this.config.labelStyle.lineHeight
+        }
+        this.emit("LOADED", this, data);
     }
 
     private onClick() {
@@ -298,7 +326,7 @@ export class TextChoice extends vf.gui.DisplayObject {
             //需要额外添加一个图标的宽度
             _width = this.config.labelStyle.fontSize / 4 + this.config.optionIconSize;
         }
-        if (_width + label.width + this._curPosX > this.config.containerWidth) {
+        if (_width + label.width  + this.config.optionPaddingX * 2 + this._curPosX > this.config.containerWidth) {
             //超过了，直接折行
             this._curPosY += this.config.labelStyle.lineHeight;
             this._curPosX = 0;
@@ -306,10 +334,10 @@ export class TextChoice extends vf.gui.DisplayObject {
         let displayObj: any = null;
         let interactObj: any = null;
         let status = this._optionStatusList[this._optionId].status;
-        displayObj = this.createRect(label.width + _width, this.config.labelStyle.fontSize + this.config.optionPaddingY * 2);
+        displayObj = this.createRect(label.width + _width + this.config.optionPaddingX * 2, this.config.labelStyle.fontSize + this.config.optionPaddingY * 2);
         this.addElement(
             displayObj,
-            this._curPosX + this.config.optionPaddingX,
+            this._curPosX,
             this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10
         );
         if (status == "selected_right") {
@@ -449,24 +477,25 @@ export class TextChoice extends vf.gui.DisplayObject {
 
     private createRect(width: number, height: number) {
         const rect = new vf.gui.Rect();
-        rect.lineColor = this.config.optionBackgroundColor;
-        rect.lineWidth = 0;
         rect.anchorY = 0.5;
-        rect.style.width = width;
-        rect.style.height = height;
+        rect.style.width = width - this.config.optionBoardLineWidth;
+        rect.style.height = height - this.config.optionBoardLineWidth;
         rect.color = this.config.optionBackgroundColor;
         rect.radius = this.config.optionBackgroundRadius; //圆角
+        rect.lineColor = this.config.optionBoardColor;
+        rect.lineWidth = this.config.optionBoardLineWidth;
 
-        //再加一层边框的
+
+        //再加一层选中时的边框的
         const rect1 = new vf.gui.Rect();
-        rect1.lineColor = this.config.optionBoardColor;
-        rect1.lineWidth = this.config.optionBoardLineWidth;
+        rect1.lineColor = this.config.optionSelectedBoardColor;
+        rect1.lineWidth = this.config.optionSelectedBoardLineWidth;
         rect1.anchorY = 0.5;
-        rect1.style.width = width - this.config.optionBoardLineWidth;
-        rect1.style.height = height - this.config.optionBoardLineWidth;
-        rect1.color = this.config.optionBackgroundColor;
-        rect1.radius = this.config.optionBackgroundRadius; //圆角
-        rect1.x = this.config.optionBoardLineWidth / 2;
+        rect1.style.width = width - this.config.optionSelectedBoardLineWidth;
+        rect1.style.height = height - this.config.optionSelectedBoardLineWidth;
+        rect1.color = this.config.optionSelectedBackgroundColor;
+        rect1.radius = this.config.optionSelectedBackgroundRadius; //圆角
+        rect1.x = this.config.optionSelectedBoardLineWidth / 2;
         rect1.visible = false;
         rect.addChild(rect1);
         return rect;

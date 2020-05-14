@@ -34,10 +34,12 @@ export class TextChoice extends vf.gui.DisplayObject {
      */
     private _config: any = {
         containerWidth: 1000,                 //组件容器宽度
-        lineHeight: 80,                       //文本行高        
-        fontSize: 22,                         //文本字号
-        fontColor: 0x586176,                  //文本颜色
-        fontFamily: '',                       //文本字体
+        labelStyle: {
+            lineHeight: 80,                       //行高
+            fontSize: 22,                         //文本字号
+            color: 0x586176,                      //文本颜色
+            fontFamily: '',                       //文本字体
+        },
         textSelectedColor: 0x5161bb,          //文本选中时的颜色
         optionBackgroundColor: 0xe9ecfe,      //选项线条背景色
         optionBoardColor: 0x7487ef,           //选项选中时的颜色
@@ -236,7 +238,7 @@ export class TextChoice extends vf.gui.DisplayObject {
         option.selected = false;
         let rect: vf.gui.Rect = option.displayObj as vf.gui.Rect;
         rect.getChildAt(0).visible = false;
-        option.label.style.color = this.config.fontColor;
+        option.label.style.color = this.config.labelStyle.color;
 
         let data = {
             id: option.id,
@@ -258,16 +260,16 @@ export class TextChoice extends vf.gui.DisplayObject {
 
         if (this._curPosX + _width + this.config.optionPaddingX * 2 > this.config.containerWidth) {
             //超过了，直接折行
-            this._curPosY += this.config.lineHeight;
+            this._curPosY += this.config.labelStyle.lineHeight;
             this._curPosX = 0;
         }
         let displayObj: any = null;
         let interactObj: any = null;
         displayObj = interactObj = this.createRect(
             label.width + this.config.optionPaddingX * 2,
-            this.config.fontSize + this.config.optionPaddingY * 2
+            this.config.labelStyle.fontSize + this.config.optionPaddingY * 2
         );
-        this.addElement(displayObj, this._curPosX, this._curPosY + this.config.fontSize / 2);
+        this.addElement(displayObj, this._curPosX, this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10);
         this.addElement(label, this._curPosX + this.config.optionPaddingX, this._curPosY);
         this._curPosX += label.width + this.config.optionPaddingX * 2;
 
@@ -294,21 +296,21 @@ export class TextChoice extends vf.gui.DisplayObject {
         let _width = 0;
         if (this._optionStatusList[this._optionId].status != "unselected_wrong") {
             //需要额外添加一个图标的宽度
-            _width = this.config.fontSize / 4 + this.config.optionIconSize;
+            _width = this.config.labelStyle.fontSize / 4 + this.config.optionIconSize;
         }
         if (_width + label.width + this._curPosX > this.config.containerWidth) {
             //超过了，直接折行
-            this._curPosY += this.config.lineHeight;
+            this._curPosY += this.config.labelStyle.lineHeight;
             this._curPosX = 0;
         }
         let displayObj: any = null;
         let interactObj: any = null;
         let status = this._optionStatusList[this._optionId].status;
-        displayObj = this.createRect(label.width + _width, this.config.fontSize + this.config.optionPaddingY * 2);
+        displayObj = this.createRect(label.width + _width, this.config.labelStyle.fontSize + this.config.optionPaddingY * 2);
         this.addElement(
             displayObj,
             this._curPosX + this.config.optionPaddingX,
-            this._curPosY + this.config.fontSize / 2
+            this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10
         );
         if (status == "selected_right") {
             label.style.color = 0xffffff;
@@ -317,7 +319,7 @@ export class TextChoice extends vf.gui.DisplayObject {
             this.addElement(
                 icon,
                 this._curPosX + label.width + this.config.optionPaddingX,
-                this._curPosY + this.config.fontSize / 2
+                this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10
             );
         } else if (status == "selected_wrong") {
             label.style.color = 0xffffff;
@@ -326,14 +328,14 @@ export class TextChoice extends vf.gui.DisplayObject {
             this.addElement(
                 icon,
                 this._curPosX + label.width + this.config.optionPaddingX,
-                this._curPosY + this.config.fontSize / 2
+                this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10
             );
         } else if (status == "unselected_right") {
             let icon = this.createImage(this.config.optionRightMissingIcon);
             this.addElement(
                 icon,
                 this._curPosX + label.width + this.config.optionPaddingX,
-                this._curPosY + this.config.fontSize / 2
+                this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10
             );
         } else if (status == "unselected_wrong") {
         }
@@ -383,7 +385,7 @@ export class TextChoice extends vf.gui.DisplayObject {
             }
         }
 
-        this.emit("RESULT", this, this._resultKeyArr); //验证结果完成，回调
+        this.emit("RESULT", this, {keys: this._resultKeyArr}); //验证结果完成，回调
     }
     /**
      * 处理文本
@@ -405,7 +407,7 @@ export class TextChoice extends vf.gui.DisplayObject {
             for (let i = 0; i < arr.length; ++i) {
                 this.dealText(arr[i], false);
                 if (i !== arr.length - 1) {
-                    this._curPosY += this.config.lineHeight;
+                    this._curPosY += this.config.labelStyle.lineHeight;
                     this._curPosX = 0;
                 }
             }
@@ -421,7 +423,7 @@ export class TextChoice extends vf.gui.DisplayObject {
                 });
             } else {
                 this._curPosX = 0;
-                this._curPosY += this.config.lineHeight;
+                this._curPosY += this.config.labelStyle.lineHeight;
                 this.addElement(label, this._curPosX, this._curPosY);
                 this._curPosX += label.width;
             }
@@ -440,10 +442,7 @@ export class TextChoice extends vf.gui.DisplayObject {
     private createLabel(text: string) {
         const label = new vf.gui.Label();
         label.text = text;
-        label.style.lineHeight = this.config.lineHeight;
-        label.style.fontSize = this.config.fontSize;
-        label.style.color = this.config.fontColor;
-        label.style.fontFamily = this.config.fontFamily;
+        label.fontCssStyle = this.config.labelStyle;
         label.validateSize();
         return label;
     }

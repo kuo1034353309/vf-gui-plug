@@ -33,10 +33,12 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
      */
     private _config: any = {
         containerWidth: 1000,                 //组件容器宽度
-        lineHeight: 80,                       //文本行高        
-        fontSize: 22,                         //文本字号
-        fontColor: 0x586176,                  //文本颜色
-        fontFamily: '',                       //文本字体
+        labelStyle: {
+            lineHeight: 40,                       //行高
+            fontSize: 40,                         //文本字号
+            color: 0xff0000,                      //文本颜色
+            fontFamily: '',                       //文本字体
+        },
         textSelectedColor: 0x5161bb,          //文本选中时的颜色
         optionBackgroundColor: 0xe9ecfe,      //选项线条背景色
         optionBoardColor: 0x7487ef,           //选项选中时的颜色
@@ -251,7 +253,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
 
         if (this._curPosX + _width + this.config.optionPaddingX * 2 > this.config.containerWidth) {
             //超过了，直接折行
-            this._curPosY += this.config.lineHeight;
+            this._curPosY += this.config.labelStyle.lineHeight;
             this._curPosX = 0;
         }
         let displayObj: any = null;
@@ -259,10 +261,10 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
         //填空题，默认文字颜色是选中颜色
         label.style.color = this.config.textSelectedColor;
         displayObj = interactObj = this.createLine(_width + this.config.optionPaddingX * 2);
-        this.addElement(displayObj, this._curPosX, this._curPosY + this.config.fontSize + 5);
+        this.addElement(displayObj, this._curPosX, this._curPosY + this.config.labelStyle.fontSize + 5);
         interactObj = this.createTransparentRect(
             _width + this.config.optionPaddingX * 2,
-            this.config.fontSize + this.config.optionPaddingY * 2
+            this.config.labelStyle.fontSize + this.config.optionPaddingY * 2
         );
         this.addElement(interactObj, this._curPosX, this._curPosY - this.config.optionPaddingY);
         this.addElement(
@@ -293,7 +295,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
         let _width = 0;
         if (_width + label.width + this._curPosX > this.config.containerWidth) {
             //超过了，直接折行
-            this._curPosY += this.config.lineHeight;
+            this._curPosY += this.config.labelStyle.lineHeight;
             this._curPosX = 0;
         }
         let displayObj: any = null;
@@ -306,7 +308,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
             label.style.color = this.config.optionWrongColor;
             displayObj = this.createLine(label.width);
             displayObj.color = this.config.optionWrongColor;
-            this.addElement(displayObj, this._curPosX, this._curPosY + this.config.fontSize / 2);
+            this.addElement(displayObj, this._curPosX, this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10);
         }
         this.addElement(label, this._curPosX, this._curPosY);
         this._curPosX += _width + label.width;
@@ -346,7 +348,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
         }
         this._text = text;
 
-        this.emit("RESULT", this, this._resultKeyArr); //验证结果完成，回调
+        this.emit("RESULT", this, {keys: this._resultKeyArr}); //验证结果完成，回调
     }
     /**
      * 处理文本
@@ -364,7 +366,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
             for (let i = 0; i < arr.length; ++i) {
                 this.dealText(arr[i], false);
                 if (i !== arr.length - 1) {
-                    this._curPosY += this.config.lineHeight;
+                    this._curPosY += this.config.labelStyle.lineHeight;
                     this._curPosX = 0;
                 }
             }
@@ -380,7 +382,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
                 });
             } else {
                 this._curPosX = 0;
-                this._curPosY += this.config.lineHeight;
+                this._curPosY += this.config.labelStyle.lineHeight;
                 this.addElement(label, this._curPosX, this._curPosY);
                 this._curPosX += label.width;
             }
@@ -399,10 +401,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
     private createLabel(text: string) {
         const label = new vf.gui.Label();
         label.text = text;
-        label.style.lineHeight = this.config.lineHeight;
-        label.style.fontSize = this.config.fontSize;
-        label.style.color = this.config.fontColor;
-        label.style.fontFamily = this.config.fontFamily;
+        label.fontCssStyle = this.config.labelStyle;
         label.validateSize();
         return label;
     }

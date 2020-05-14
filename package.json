@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "dev": "webpack --config ./config/dev.js --watch",
-    "prod": "webpack --config ./config/prod.js"
+    "prod": "webpack --config ./config/prod.js",
+    "test": "webpack --config ./config/test.js --watch" 
   },
   "keywords": [],
   "files": [

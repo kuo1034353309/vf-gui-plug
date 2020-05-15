@@ -14,7 +14,7 @@ export class TestTextFillBlanks {
         importScript(url, "TextFillBlanks", (value: any, className: string) => {
             let rect = new vf.gui.Rect();
             rect.color = 0xffffff;
-            rect.style.width = 500;
+            rect.style.width = '100%';
             rect.style.height = 1000;
             uiStage.addChild(rect);
 
@@ -22,7 +22,7 @@ export class TestTextFillBlanks {
             TextFillBlanks.y = 100;
             TextFillBlanks.x = 0;
             TextFillBlanks.config = {
-                containerWidth: 500, //组件容器宽度
+                containerWidth: 700, //组件容器宽度
                 labelStyle: {
                     lineHeight: 60, //行高
                     fontSize: 30, //文本字号
@@ -49,7 +49,7 @@ export class TestTextFillBlanks {
                 },
                 selectOption: [
                     {
-                        text: "textFillBlanks",
+                        text: "textFillBlanks hello world is this a text",
                         key: "0",
                     },
                     {
@@ -67,9 +67,12 @@ export class TestTextFillBlanks {
             TextFillBlanks.on("RESULT", (target: any, data: any) => {
                 console.log("result", data);
             });
+            TextFillBlanks.on("LOADED", (target: any, data: any) => {
+                console.log("loaded", data);
+            });
 
             const button = new vf.gui.Button();
-            button.style.left = 230;
+            button.style.left = 200;
             button.style.top = 30;
             button.style.width = 100;
             button.style.height = 50;
@@ -84,7 +87,19 @@ export class TestTextFillBlanks {
                 this
             );
 
+            const restart = new vf.gui.Button();
+            restart.style.left = 300;
+            restart.style.top = 30;
+            restart.style.width = 100;
+            restart.style.height = 50;
+            restart.label.style.color = 0xff0000;
+            restart.text = "重置";
+            restart.on(vf.gui.Interaction.TouchMouseEvent.onClick, () => {
+                TextFillBlanks.restart();
+            }, this);
+
             uiStage.addChild(button);
+            uiStage.addChild(restart);
 
             const button1 = new vf.gui.Button();
             button1.style.left = 100;

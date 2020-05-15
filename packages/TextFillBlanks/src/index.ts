@@ -8,7 +8,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
     private _curPosX: number = 0; //当前行的起始位置x
     private _curPosY: number = 25; //当前行的起始位置y
     private _optionId: number = 0; //选项id
-
+    private _complete: boolean = false;//是否完成
     /**
      * 每个选项的状态
      * {
@@ -51,17 +51,18 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
         optionWrongColor: 0xff0000,           //选项错误颜色
         targetOption: null,                   //目标属性
         selectOption: null,                   //选项属性
+        checkResultType: 0                    //验证显示类型  0-仅正确错误  1-错误的需要修正
     };
 
     private _resultKeyArr: string[] = []; //作答结果
+    private _optionsPosArr: any[] = []; //选项的坐标数组
 
     /**
      * 设置选中框的key
      * @param key
      */
     public setBlankValue(key: string) {
-        if (this._selectedOptionId == -1) return;
-
+        if (this._complete) return;
         this._resultKeyArr[this._selectedOptionId] = key;
         let text = this._originText;
         for (let i = 0; i < this._resultKeyArr.length; ++i) {
@@ -79,15 +80,36 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
         }
     }
 
+    /*
+    *重新开始
+    */
+   public restart(){
+    this._resultKeyArr = [];
+    this._optionStatusList = [];
+    this._selectedTotal = 0;
+    this._optionAnswer = [];
+    this._checkResult = false;
+    this._complete = false;
+    this.parseTemplateData();
+}
+
     private changeOptionSelected() {
-        for (let i = 0; i < this._optionList.length; ++i) {
-            if (this._optionList[i].text.trim() == "") {
-                this.selectedOptionId = i;
-                return;
-            }
+        // for (let i = 0; i < this._optionList.length; ++i) {
+        //     if (this._optionList[i].text.trim() == "") {
+        //         this.selectedOptionId = i;
+        //         console.log('changeOptionSelected', this.selectedOptionId)
+        //         return;
+        //     }
+        // }
+        // this._selectedOptionId = -1;
+        let id = this._selectedOptionId + 1;
+        if(id < this._optionAnswer.length){
+            this.selectedOptionId = this._selectedOptionId + 1;
         }
-        this._selectedOptionId = -1;
-        this.emit("COMPLETE", this); //作答完成，回调
+        else{
+            this._complete = true;
+            this.emit("COMPLETE", this); //作答完成，回调
+        }
     }
 
     public set config(value: any) {
@@ -148,6 +170,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
         this.removeChildren();
         this._optionId = 0;
         this._optionList = [];
+        this._optionsPosArr = [];
         this._curPosX = 0;
         this._curPosY = 0;
     }
@@ -172,12 +195,20 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
             }
         });
 
-        //注册点击事件
-        this._optionList.forEach((item) => {
-            let interactObj: vf.gui.DisplayObject = item.interactObj as vf.gui.DisplayObject;
-            interactObj.interactabled = true;
-            interactObj.on("click", this.onClick, this);
-        });
+        //!注册点击事件  ziye+ 涉及到选项折行的情况，暂时去掉点击事件
+        // this._optionList.forEach((item) => {
+        //     let interactObj: vf.gui.DisplayObject = item.interactObj as vf.gui.DisplayObject;
+        //     interactObj.interactabled = true;
+        //     interactObj.on("click", this.onClick, this);
+        // });
+
+        //挂载完成，回调
+        let data = {
+            width: this.config.containerWidth,
+            height: this._curPosY + this.config.labelStyle.lineHeight,
+            optionsPosArr: this._optionsPosArr
+        }
+        this.emit("LOADED", this, data);
     }
 
     private onClick() {
@@ -245,74 +276,133 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
     /**
      * 处理选项
      */
-    private dealOption(item: string) {
-        item = item.replace(/[\{\}]/g, " ");
+    private dealOption(item: string, flag: boolean = true, subOption: boolean = false) {
+        let optionPaddingX = this.config.optionPaddingX;
+        if(!flag){
+            optionPaddingX = 0;
+        }
+        if(flag){
+            item = item.replace(/[\{\}]/g, " ");
+        }
         let label = this.createLabel(item);
         let _width = label.width;
-        _width = this.config.optionBlankMinSize > label.width ? this.config.optionBlankMinSize : label.width;
+        if(flag){
+            _width = this.config.optionBlankMinSize > label.width ? this.config.optionBlankMinSize : label.width;
+        }
 
-        if (this._curPosX + _width + this.config.optionPaddingX * 2 > this.config.containerWidth) {
-            //超过了，直接折行
-            this._curPosY += this.config.labelStyle.lineHeight;
-            this._curPosX = 0;
+        if (this._curPosX + _width + optionPaddingX * 2 > this.config.containerWidth) {
+            if(flag && item.trim() != ""){
+                label.release();
+                //简单的方法是按空格截一下，暂时先这样，如果有性能问题再换其他方法
+                item = item.replace(/ /g, " *_#");
+                let arr: string[] = item.split("*_#");
+                arr.forEach((item,index) => {
+                    this.dealOption(item, false, index == arr.length - 1);
+                });
+                return;
+            }
+            else{
+                //超过了，直接折行
+                this._curPosY += this.config.labelStyle.lineHeight;
+                this._curPosX = 0;
+            }
         }
         let displayObj: any = null;
         let interactObj: any = null;
         //填空题，默认文字颜色是选中颜色
         label.style.color = this.config.textSelectedColor;
-        displayObj = interactObj = this.createLine(_width + this.config.optionPaddingX * 2);
+        displayObj = interactObj = this.createLine(_width + optionPaddingX * 2);
         this.addElement(displayObj, this._curPosX, this._curPosY + this.config.labelStyle.fontSize + 5);
+
+        //添加选项坐标
+        let posObj = {
+            x: this._curPosX,
+            y: this._curPosY + this.config.labelStyle.fontSize + 5
+        }
+        this._optionsPosArr.push(posObj);
+
         interactObj = this.createTransparentRect(
-            _width + this.config.optionPaddingX * 2,
+            _width + optionPaddingX * 2,
             this.config.labelStyle.fontSize + this.config.optionPaddingY * 2
         );
         this.addElement(interactObj, this._curPosX, this._curPosY - this.config.optionPaddingY);
         this.addElement(
             label,
-            this._curPosX + (_width + this.config.optionPaddingX * 2 - label.width) / 2,
+            this._curPosX + (_width + optionPaddingX * 2 - label.width) / 2,
             this._curPosY
         );
         this._curPosX += _width;
-        //添加到选项数组
-        interactObj.name = this._optionId;
-        let option = {
-            id: this._optionId++,
-            text: item.trim(),
-            selected: false,
-            displayObj: displayObj as vf.gui.Rect,
-            interactObj: interactObj as vf.gui.DisplayObject,
-            label: label,
-        };
-        this._optionList.push(option);
+        if(flag || subOption){
+            //添加到选项数组
+            interactObj.name = this._optionId;
+            let option = {
+                id: this._optionId++,
+                text: item.trim(),
+                selected: false,
+                displayObj: displayObj as vf.gui.Rect,
+                interactObj: interactObj as vf.gui.DisplayObject,
+                label: label,
+            };
+            this._optionList.push(option);
+        }
     }
 
     /**
      * 处理验证阶段的选项
      */
-    private dealCheckedOption(item: string) {
+    private dealCheckedOption(item: string, flag: boolean = true, subOption: boolean = false) {
         item = item.replace(/[\{\}]/g, " ");
         let label = this.createLabel(item);
         let _width = 0;
         if (_width + label.width + this._curPosX > this.config.containerWidth) {
-            //超过了，直接折行
-            this._curPosY += this.config.labelStyle.lineHeight;
-            this._curPosX = 0;
+            if(flag){
+                label.release();
+                //简单的方法是按空格截一下，暂时先这样，如果有性能问题再换其他方法
+                item = item.replace(/ /g, " *_#");
+                let arr: string[] = item.split("*_#");
+                arr.forEach((item,index) => {
+                    this.dealCheckedOption(item, false, index == arr.length - 1);
+                });
+                return;
+            }
+            else{
+                //超过了，直接折行
+                this._curPosY += this.config.labelStyle.lineHeight;
+                this._curPosX = 0;
+            }
         }
         let displayObj: any = null;
         let interactObj: any = null;
         let status = this._optionStatusList[this._optionId].status;
-        //填空题，正确是绿色，错误是红色且添加删除线
-        if (status == "selected_right" || status == "unselected_right") {
-            label.style.color = this.config.optionRightColor;
-        } else {
-            label.style.color = this.config.optionWrongColor;
+        if(this.config.checkResultType == 0){
+            //填空题，仅显示正确错误
+            if (status == "selected_right" || status == "unselected_right") {
+                label.style.color = this.config.optionRightColor;
+            } else {
+                label.style.color = this.config.optionWrongColor;
+            }
             displayObj = this.createLine(label.width);
-            displayObj.color = this.config.optionWrongColor;
-            this.addElement(displayObj, this._curPosX, this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10);
+            this.addElement(displayObj, this._curPosX, this._curPosY + this.config.labelStyle.fontSize + 5);
+            this.addElement(label, this._curPosX, this._curPosY);
         }
-        this.addElement(label, this._curPosX, this._curPosY);
+        else{
+            console.log('ziye--------', item, status)
+            //填空题，正确是绿色，错误是红色且添加删除线
+            if (status == "selected_right" || status == "unselected_right") {
+                label.style.color = this.config.optionRightColor;
+            } else {
+                label.style.color = this.config.optionWrongColor;
+                displayObj = this.createLine(label.width);
+                displayObj.color = this.config.optionWrongColor;
+                this.addElement(displayObj, this._curPosX, this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10);
+            }
+            this.addElement(label, this._curPosX, this._curPosY);
+        }
+
         this._curPosX += _width + label.width;
-        this._optionId++;
+        if(flag || subOption){
+            this._optionId++;
+        }
     }
 
     /**
@@ -331,19 +421,29 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
                 optionStatus.status = "selected_right";
                 this._optionStatusList.push(optionStatus);
             } else {
-                //作答错误
-                let item = this._resultKeyArr[i] ? this.config.selectOption[this._resultKeyArr[i]] : { text: " " };
-                let option = `{${item.text}}{}`; //因为答错了，要给后面跟一个正确的选项
-                text = text.replace(/{}/, option);
-                let optionStatus: any = {};
-                optionStatus.status = "selected_wrong";
-                this._optionStatusList.push(optionStatus);
-                item = this.config.selectOption[this._optionAnswer[i]];
-                option = `{${item.text}}`;
-                text = text.replace(/{}/, option);
-                let optionStatus2: any = {};
-                optionStatus2.status = "selected_right";
-                this._optionStatusList.push(optionStatus2);
+                if(this.config.checkResultType == 0){
+                    let item = this._resultKeyArr[i] ? this.config.selectOption[this._resultKeyArr[i]] : { text: " " };
+                    let option = `{${item.text}}`; //因为答错了，要给后面跟一个正确的选项
+                    text = text.replace(/{}/, option);
+                    let optionStatus: any = {};
+                    optionStatus.status = "selected_wrong";
+                    this._optionStatusList.push(optionStatus);
+                }
+                else{
+                    //作答错误
+                    let item = this._resultKeyArr[i] ? this.config.selectOption[this._resultKeyArr[i]] : { text: " " };
+                    let option = `{${item.text}}{}`; //因为答错了，要给后面跟一个正确的选项
+                    text = text.replace(/{}/, option);
+                    let optionStatus: any = {};
+                    optionStatus.status = "selected_wrong";
+                    this._optionStatusList.push(optionStatus);
+                    item = this.config.selectOption[this._optionAnswer[i]];
+                    option = `{${item.text}}`;
+                    text = text.replace(/{}/, option);
+                    let optionStatus2: any = {};
+                    optionStatus2.status = "selected_right";
+                    this._optionStatusList.push(optionStatus2);
+                }
             }
         }
         this._text = text;

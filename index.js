@@ -24,7 +24,7 @@ app.ticker.add(updata, this);
 
 
 //添加测试页面
-//new TestTextChoice(app, uiStage);
-new TestTextFillBlanks(app, uiStage);
+new TestTextChoice(app, uiStage);
+//new TestTextFillBlanks(app, uiStage);
 
 

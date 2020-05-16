@@ -9,7 +9,7 @@ export class TestTextFillBlanks {
     private onLoad(app: vf.Application, uiStage: vf.gui.Stage) {
         let url =
             process.env.NODE_ENV === "production"
-                ? "//s.vipkidstatic.com/vf/plugin/TextFillBlanks/0.0.2.js"
+                ? "//s.vipkidstatic.com/vf/plugin/TextFillBlanks/0.0.3.js"
                 : "./dist/TextFillBlanks.js";
         importScript(url, "TextFillBlanks", (value: any, className: string) => {
             let rect = new vf.gui.Rect();
@@ -45,20 +45,20 @@ export class TestTextFillBlanks {
                 optionType: "single", //选项类型，single-单选   multiple-多选   radio-选项互斥
                 targetOption: {
                     text: "This is a {} example, {} select the {} option.",
-                    key: "1,0,2",
+                    key: "hello1,hello2,hello3",
                 },
                 selectOption: [
                     {
                         text: "textFillBlanks hello world is this a text",
-                        key: "0",
+                        key: "hello1",
                     },
                     {
                         text: "please",
-                        key: "1",
+                        key: "hello2",
                     },
                     {
                         text: "correct",
-                        key: "2",
+                        key: "hello3",
                     },
                 ],
             };
@@ -70,7 +70,10 @@ export class TestTextFillBlanks {
             TextFillBlanks.on("LOADED", (target: any, data: any) => {
                 console.log("loaded", data);
             });
-
+            TextFillBlanks.on("COMPLETE", (target: any, data: any) => {
+                console.log("COMPLETE", data);
+            });
+            TextFillBlanks.setActive(true);
             const button = new vf.gui.Button();
             button.style.left = 200;
             button.style.top = 30;
@@ -111,7 +114,7 @@ export class TestTextFillBlanks {
             button1.on(
                 vf.gui.Interaction.TouchMouseEvent.onClick,
                 () => {
-                    TextFillBlanks.setBlankValue("0");
+                    TextFillBlanks.setBlankValue("hello1");
                 },
                 this
             );
@@ -128,7 +131,7 @@ export class TestTextFillBlanks {
             button2.on(
                 vf.gui.Interaction.TouchMouseEvent.onClick,
                 () => {
-                    TextFillBlanks.setBlankValue("1");
+                    TextFillBlanks.setBlankValue("hello2");
                 },
                 this
             );
@@ -145,7 +148,7 @@ export class TestTextFillBlanks {
             button3.on(
                 vf.gui.Interaction.TouchMouseEvent.onClick,
                 () => {
-                    TextFillBlanks.setBlankValue("2");
+                    TextFillBlanks.setBlankValue("hello3");
                 },
                 this
             );

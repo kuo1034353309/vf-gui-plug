@@ -11,7 +11,7 @@ export class TestTextChoice{
     private onLoad(app: vf.Application, uiStage: vf.gui.Stage){
         let url =
             process.env.NODE_ENV === "production"
-                ? "//s.vipkidstatic.com/vf/plugin/TextChoice/0.0.2.js"
+                ? "//s.vipkidstatic.com/vf/plugin/TextChoice/0.0.3.js"
                 : "./dist/TextChoice.js";
         importScript(url, 'TextChoice', (value: any, className: string) => {
             let rect = new vf.gui.Rect();

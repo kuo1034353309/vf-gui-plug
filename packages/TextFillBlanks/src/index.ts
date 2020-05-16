@@ -62,6 +62,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
      * @param key
      */
     public setBlankValue(key: string) {
+        if (!this._active) return;
         if (this._complete) return;
         this._resultKeyArr[this._selectedOptionId] = key;
         let text = this._originText;
@@ -71,12 +72,27 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
             );
             let str = option ? option.text : " ";
             text = text.replace(/{}/, `{${str}}`);
+            console.log(key, this.config.selectOption, this._resultKeyArr);
         }
         this.text = text;
         if (key != "") {
             this.changeOptionSelected();
         } else {
             this.checkOptionSelected(this._selectedOptionId);
+        }
+    }
+
+    /**
+     * 是否激活
+     */
+    private _active: boolean = false;
+    public setActive(value: boolean){
+        this._active = value;
+        if(value){
+            this.checkOptionSelected(this._selectedOptionId);
+        }
+        else{
+            this.checkOptionSelected(-1);
         }
     }
 
@@ -163,7 +179,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
         let answerStr = this.config.targetOption.key;
         this._optionAnswer = answerStr.split(",");
         this.text = text; //触发解析
-        this.selectedOptionId = 0;
+        //this.selectedOptionId = 0;
     }
 
     private reset() {
@@ -231,7 +247,9 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
             if (selectedOption.id == id) return;
             this.onUnSelected(selectedOption);
         }
-        this.onSelected(option);
+        if(option){
+            this.onSelected(option);
+        }
     }
 
     /**
@@ -414,7 +432,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
         for (let i = 0; i < this._optionAnswer.length; ++i) {
             if (this._optionAnswer[i] == this._resultKeyArr[i]) {
                 //作答正确
-                let item = this.config.selectOption[this._resultKeyArr[i]];
+                let item = this.config.selectOption.find((item: { key: string; text: string}) => item.key == this._resultKeyArr[i]) || {text: " "};
                 let option = `{${item.text}}`;
                 text = text.replace(/{}/, option);
                 let optionStatus: any = {};
@@ -422,7 +440,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
                 this._optionStatusList.push(optionStatus);
             } else {
                 if(this.config.checkResultType == 0){
-                    let item = this._resultKeyArr[i] ? this.config.selectOption[this._resultKeyArr[i]] : { text: " " };
+                    let item = this.config.selectOption.find((item: { key: string; text: string}) => item.key == this._resultKeyArr[i]) || {text: " "};
                     let option = `{${item.text}}`; //因为答错了，要给后面跟一个正确的选项
                     text = text.replace(/{}/, option);
                     let optionStatus: any = {};
@@ -431,7 +449,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
                 }
                 else{
                     //作答错误
-                    let item = this._resultKeyArr[i] ? this.config.selectOption[this._resultKeyArr[i]] : { text: " " };
+                    let item = this.config.selectOption.find((item: { key: string; text: string}) => item.key == this._resultKeyArr[i]) || {text: " "};
                     let option = `{${item.text}}{}`; //因为答错了，要给后面跟一个正确的选项
                     text = text.replace(/{}/, option);
                     let optionStatus: any = {};

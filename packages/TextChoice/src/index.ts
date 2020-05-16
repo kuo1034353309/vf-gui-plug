@@ -63,6 +63,7 @@ export class TextChoice extends vf.gui.DisplayObject {
         optionType: "single",                                  //选项类型，single-单选   multiple-多选   radio-选项互斥
         targetOption: null,                   //目标属性
         selectOption: null,                   //选项属性
+        checkResultType: 0                    //验证显示类型  0-仅正确错误  1-错误的需要修正
     };
 
     private _resultKeyArr: string[] = []; //作答结果
@@ -322,7 +323,8 @@ export class TextChoice extends vf.gui.DisplayObject {
         item = item.replace(/[\{\}]/g, " ");
         let label = this.createLabel(item);
         let _width = 0;
-        if (this._optionStatusList[this._optionId].status != "unselected_wrong") {
+        if (this._optionStatusList[this._optionId].status == "selected_right" ||
+            this._optionStatusList[this._optionId].status == "selected_wrong") {
             //需要额外添加一个图标的宽度
             _width = this.config.labelStyle.fontSize / 4 + this.config.optionIconSize;
         }
@@ -359,12 +361,12 @@ export class TextChoice extends vf.gui.DisplayObject {
                 this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10
             );
         } else if (status == "unselected_right") {
-            let icon = this.createImage(this.config.optionRightMissingIcon);
-            this.addElement(
-                icon,
-                this._curPosX + label.width + this.config.optionPaddingX,
-                this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10
-            );
+            // let icon = this.createImage(this.config.optionRightMissingIcon);
+            // this.addElement(
+            //     icon,
+            //     this._curPosX + label.width + this.config.optionPaddingX,
+            //     this._curPosY + this.config.labelStyle.fontSize / 2 + this.config.labelStyle.fontSize / 10
+            // );
         } else if (status == "unselected_wrong") {
         }
         this.addElement(label, this._curPosX + this.config.optionPaddingX, this._curPosY);

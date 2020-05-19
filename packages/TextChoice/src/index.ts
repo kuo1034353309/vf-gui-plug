@@ -379,6 +379,7 @@ export class TextChoice extends vf.gui.DisplayObject {
      */
     private dealCheckResult() {
         this._optionStatusList = [];
+        let result = true;
         for (let i = 0; i < this._optionList.length; ++i) {
             let option = this._optionList[i];
             let optionStatus: any = {};
@@ -390,24 +391,28 @@ export class TextChoice extends vf.gui.DisplayObject {
                         optionStatus.status = "selected_right";
                     } else {
                         optionStatus.status = "selected_wrong";
+                        result = false;
                     }
                 } else {
                     if (this._optionAnswer.includes(this.config.selectOption[option.id].key)) {
                         optionStatus.status = "selected_right";
                     } else {
                         optionStatus.status = "selected_wrong";
+                        result = false;
                     }
                 }
             } else {
                 if (this.config.optionType == "radio") {
                     if (this._optionAnswer[option.groupId] == this.config.selectOption[option.id].key) {
                         optionStatus.status = "unselected_right";
+                        result = false;
                     } else {
                         optionStatus.status = "unselected_wrong";
                     }
                 } else {
                     if (this._optionAnswer.includes(this.config.selectOption[option.id].key)) {
                         optionStatus.status = "unselected_right";
+                        result = false;
                     } else {
                         optionStatus.status = "unselected_wrong";
                     }
@@ -415,7 +420,7 @@ export class TextChoice extends vf.gui.DisplayObject {
             }
         }
 
-        this.emit("RESULT", this, {keys: this._resultKeyArr}); //验证结果完成，回调
+        this.emit("RESULT", this, {keys: this._resultKeyArr, result: result}); //验证结果完成，回调
     }
     /**
      * 处理文本

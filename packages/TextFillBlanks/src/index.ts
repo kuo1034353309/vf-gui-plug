@@ -100,6 +100,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
     *重新开始
     */
    public restart(){
+    this._selectedOptionId = 0;
     this._resultKeyArr = [];
     this._optionStatusList = [];
     this._selectedTotal = 0;
@@ -224,6 +225,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
             height: this._curPosY + this.config.labelStyle.lineHeight,
             optionsPosArr: this._optionsPosArr
         }
+        console.log('loaded......');
         this.emit("LOADED", this, data);
     }
 
@@ -428,6 +430,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
      */
     private dealCheckResult() {
         this._optionStatusList = [];
+        let result = true;
         let text = this._originText;
         for (let i = 0; i < this._optionAnswer.length; ++i) {
             if (this._optionAnswer[i] == this._resultKeyArr[i]) {
@@ -439,6 +442,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
                 optionStatus.status = "selected_right";
                 this._optionStatusList.push(optionStatus);
             } else {
+                result = false;
                 if(this.config.checkResultType == 0){
                     let item = this.config.selectOption.find((item: { key: string; text: string}) => item.key == this._resultKeyArr[i]) || {text: " "};
                     let option = `{${item.text}}`; //因为答错了，要给后面跟一个正确的选项
@@ -466,7 +470,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
         }
         this._text = text;
 
-        this.emit("RESULT", this, {keys: this._resultKeyArr}); //验证结果完成，回调
+        this.emit("RESULT", this, {keys: this._resultKeyArr, result: result}); //验证结果完成，回调
     }
     /**
      * 处理文本

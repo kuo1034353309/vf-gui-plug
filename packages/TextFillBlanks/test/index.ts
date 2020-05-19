@@ -9,7 +9,7 @@ export class TestTextFillBlanks {
     private onLoad(app: vf.Application, uiStage: vf.gui.Stage) {
         let url =
             process.env.NODE_ENV === "production"
-                ? "//s.vipkidstatic.com/vf/plugin/TextFillBlanks/0.0.3.js"
+                ? "//s.vipkidstatic.com/vf/plugin/TextFillBlanks/0.0.4.js"
                 : "./dist/TextFillBlanks.js";
         importScript(url, "TextFillBlanks", (value: any, className: string) => {
             let rect = new vf.gui.Rect();
@@ -99,6 +99,7 @@ export class TestTextFillBlanks {
             restart.text = "重置";
             restart.on(vf.gui.Interaction.TouchMouseEvent.onClick, () => {
                 TextFillBlanks.restart();
+                TextFillBlanks.setActive(true);
             }, this);
 
             uiStage.addChild(button);

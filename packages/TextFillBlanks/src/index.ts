@@ -259,7 +259,9 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
     }
 
     private onClick() {
-        if(!this._active) return;
+        if(!this._active){
+            this._active = true;
+        }
         let id: number = parseInt(arguments[1].name);
         this.checkOptionSelected(id, true);
     }

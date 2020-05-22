@@ -75,7 +75,7 @@ export class TestTextFillBlanks {
             TextFillBlanks.on("COMPLETE", (target: any, data: any) => {
                 console.log("COMPLETE", data);
             });
-            TextFillBlanks.setActive(true);
+            TextFillBlanks.setActive(false);
 
             // let flag: boolean = true;
             // setInterval(() => {

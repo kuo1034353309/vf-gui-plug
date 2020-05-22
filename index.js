@@ -13,6 +13,8 @@ import {TestKawaseBlurFilter} from './packages/filterKawaseBlur/test'
 import {TestAdvancedBloomFilter} from './packages/filterAdvancedBloom/test'
 import {TestAsciiFilter} from './packages/filterAscii/test'
 import {TestBevelFilter} from './packages/filterBevel/test'
+import {TestBloomFilter} from './packages/filterBloom/test'
+import {TestBulgePinchFilter} from './packages/filterBulgePinch/test'
 
 
 var app = new vf.Application({ 
@@ -48,6 +50,7 @@ app.ticker.add(updata, this);
 //new TestKawaseBlurFilter(app, uiStage);
 //new TestAdvancedBloomFilter(app, uiStage);
 //new TestAsciiFilter(app, uiStage);
-new TestBevelFilter(app, uiStage);
-
+//new TestBevelFilter(app, uiStage);
+//new TestBloomFilter(app, uiStage);
+new TestBulgePinchFilter(app, uiStage);
 

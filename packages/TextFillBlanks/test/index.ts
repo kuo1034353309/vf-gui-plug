@@ -63,7 +63,9 @@ export class TestTextFillBlanks {
                 ],
             };
             uiStage.addChild(TextFillBlanks);
-            TextFillBlanks.on("OPTION_CHANGE", (target: any, data: any) => {});
+            TextFillBlanks.on("OPTION_CLICK", (target: any, data: any) => {
+                console.log("OPTION_CLICK", data);
+            });
             TextFillBlanks.on("RESULT", (target: any, data: any) => {
                 console.log("result", data);
             });
@@ -74,6 +76,13 @@ export class TestTextFillBlanks {
                 console.log("COMPLETE", data);
             });
             TextFillBlanks.setActive(true);
+
+            // let flag: boolean = true;
+            // setInterval(() => {
+            //     flag = !flag;
+            //     TextFillBlanks.setActive(flag);
+            // }, 3000);
+
             const button = new vf.gui.Button();
             button.style.left = 200;
             button.style.top = 30;

@@ -44,7 +44,7 @@ export class TestTextFillBlanks {
                 optionIconSize: 15, //图标尺寸
                 optionType: "single", //选项类型，single-单选   multiple-多选   radio-选项互斥
                 targetOption: {
-                    text: "This is a {} example, {} select the {} option.",
+                    text: "asdfasdf{}dknkjsd{}adsasdf{}sadfasdf",
                     key: "hello1,hello2,hello3",
                 },
                 selectOption: [

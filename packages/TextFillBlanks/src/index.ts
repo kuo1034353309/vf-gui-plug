@@ -75,9 +75,13 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
             text = text.replace(/{}/, `{${str}}`);
         }
         this.text = text;
+        console.log(text);
         if (key != "") {
             this.changeOptionSelected(0);
         } else {
+            let arr = this._optionList.filter(item => item.groupId == this._selectedOptionId + 1);
+            this._selectedOptionId = arr[0].id;
+            console.log('11111', this._selectedOptionId)
             this.checkOptionSelected(this._selectedOptionId);
         }
     }
@@ -263,6 +267,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
             this._active = true;
         }
         let id: number = parseInt(arguments[1].name);
+        console.log('1111');
         this.checkOptionSelected(id, true);
     }
 
@@ -286,6 +291,7 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
 
         //判断是否有内容且是多个option一组的，如果有，清空内容后，重置text，如果没有，就算了
         let groupId = option.groupId;
+        console.log('111', groupId);
 
         //需要点击的回调
         let data = {
@@ -544,10 +550,10 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
      * @param flag  //是否遇难后直接折行
      */
     private dealText(text: string, flag: boolean = false) {
+        if (flag) this._groupId++;
         if (text == "") {
             return;
         }
-        if (flag) this._groupId++;
         let label = this.createLabel(text);
         if (text.indexOf("\n") !== -1) {
             //有换行符

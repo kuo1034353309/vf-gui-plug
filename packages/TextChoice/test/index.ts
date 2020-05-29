@@ -30,6 +30,7 @@ export class TestTextChoice{
                     fontSize: 30,                         //文本字号
                     color: 0,                      //文本颜色
                     fontFamily: 'Arial',                       //文本字体
+                    fontWeight: 900
                 },
                 textSelectedColor: 0x5161bb,          //文本选中时的颜色
                 optionSelectedBackgroundColor: 0xe9ecfe,      //选项选中时背景色

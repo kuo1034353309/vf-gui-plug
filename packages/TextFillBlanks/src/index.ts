@@ -254,8 +254,9 @@ export class TextFillBlanks extends vf.gui.DisplayObject {
         });
 
         //挂载完成，回调
+        let width = this._curPosY == 0 ? this._curPosX : this.config.containerWidth;
         let data = {
-            width: this.config.containerWidth,
+            width: width,
             height: this._curPosY + this.config.labelStyle.lineHeight,
             optionsPosArr: this._optionsPosArr,
         };

@@ -21,6 +21,9 @@ export class TestTextFillBlanks {
             let TextFillBlanks: TextFillBlanks = new (vf.gui as any).TextFillBlanks();
             TextFillBlanks.y = 100;
             TextFillBlanks.x = 0;
+            TextFillBlanks.on("LOADED", (target: any, data: any) => {
+                console.log("loaded", data);
+            });
             TextFillBlanks.config = {
                 containerWidth: 700, //组件容器宽度
                 labelStyle: {
@@ -44,8 +47,8 @@ export class TestTextFillBlanks {
                 optionIconSize: 15, //图标尺寸
                 optionType: "single", //选项类型，single-单选   multiple-多选   radio-选项互斥
                 targetOption: {
-                    text: "asdfasdf{}dknkjsd{}adsasdf{}sadfasdf",
-                    key: "hello1,hello2,hello3",
+                    text: "asddf{}dknm{}",
+                    key: "hello1,hello2",
                 },
                 selectOption: [
                     {
@@ -68,9 +71,6 @@ export class TestTextFillBlanks {
             });
             TextFillBlanks.on("RESULT", (target: any, data: any) => {
                 console.log("result", data);
-            });
-            TextFillBlanks.on("LOADED", (target: any, data: any) => {
-                console.log("loaded", data);
             });
             TextFillBlanks.on("COMPLETE", (target: any, data: any) => {
                 console.log("COMPLETE", data);
